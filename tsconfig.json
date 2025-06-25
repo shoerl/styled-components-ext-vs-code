@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2020", // Align with VS Code's Node version
+    "outDir": "out",
+    "rootDir": ".", // Consider changing to "src" if extension.ts is moved there
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "lib": [
+      "es2020"
+    ]
+  },
+  "include": [
+    "extension.ts",
+    "src/**/*.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
+}

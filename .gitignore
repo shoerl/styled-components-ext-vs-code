@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+dist/
+build/
+
+# VS Code specific
+.vscode/
+*.vsix
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+
+# Temp files
+theme/theme-values.json # This is generated, so should be gitignored by default
+# If the user wants to commit it, they can explicitly add it.
+# We will create it if it doesn't exist during activation or on command.
+
+# Editor directories and files
+.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
