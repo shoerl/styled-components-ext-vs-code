@@ -36,7 +36,8 @@
     "@types/vscode": "^1.80.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "@vscode/vsce": "^3.6.0"
   },
   "contributes": {
     "commands": [
