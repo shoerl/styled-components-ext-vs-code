@@ -11,6 +11,16 @@ const POTENTIAL_THEME_PATH_REGEX = /\b(?:theme\.)?([\w.]+)\b/g;
 // More specific regex if we know it's a theme access.
 // Looks for theme.a.b.c or if we can identify a variable that IS theme, then var.a.b.c
 // For now, let's focus on explicit `theme.path` and simple destructured cases.
+// Note: The regex-based context detection here has limitations. It may not correctly
+// identify theme paths in all scenarios, especially with complex destructuring,
+// aliasing (`const myTheme = props.theme; myTheme.path.to.value`), or when theme
+// is passed through multiple function calls.
+// A more robust solution would involve semantic analysis using the TypeScript
+// Language Service. Such analysis would allow tracing variables back to their
+// origins and checking their types, providing more accurate theme path detection.
+// If `typescript-styled-plugin` is active, it would improve the TS Language Service's
+// understanding of the surrounding styled-components code, potentially aiding such
+// semantic analysis.
 
 export class ThemeHoverProvider implements vscode.HoverProvider {
     public provideHover(

@@ -17,13 +17,19 @@ const THEME_ACCESS_REGEX = /(?:props\.theme\.|\(\{[\s\S]*?theme[\s\S]*?\}\)\s*=>
 // Captures:
 // 1. The full prefix like `({ theme }) => theme.` or `props.theme.`
 // 2. The partial path typed so far, e.g., `palette.primary`
+// Note: This regex-based approach has limitations, especially with complex aliasing of the theme object
+// or unconventional access patterns. For instance, `({ theme: myTheme }) => myTheme.somePath` might not be
+// correctly identified if `myTheme` is the part being completed.
+// A more robust solution would involve semantic analysis using the TypeScript Language Service,
+// which would benefit from plugins like `typescript-styled-plugin` if the user has it installed,
+// as that plugin improves TS's understanding of styled-components contexts.
 const THEME_PATH_REGEX = /((?:props\.theme\.|\(\{[\s\S]*?theme[\s\S]*?\}\)\s*=>\s*theme\.|\(\s*(\w+)\s*\)\s*=>\s*\2\.theme\.|\{\s*theme\s*\}\.|\btheme\.))([\w.]*)$/i;
 
 
 // Regex to identify styled-components tagged template literals
 // Looks for styled.foo`...` or styled(Component)`...`
 // This is a simplified check and might need refinement for complex cases.
-const STYLED_COMPONENT_REGEX = /styled(?:\.\w+|(?:\s*\([\w.]+\))))\s*`/g;
+const STYLED_COMPONENT_REGEX = /styled(?:\.\w+|\s*\([\w.]+\))\s*`/g;
 
 
 export class ThemeCompletionItemProvider implements vscode.CompletionItemProvider {

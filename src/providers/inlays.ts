@@ -7,6 +7,18 @@ import { getThemeData, FlattenedTheme } from '../loadTheme';
 // 1. The full match (e.g., "theme.palette.primary.main")
 // 2. The prefix if any (e.g., "theme.")
 // 3. The actual theme key path (e.g., "palette.primary.main")
+// Note: This regex (`THEME_PATH_DETECTION_REGEX`) is used to find all occurrences of theme access patterns
+// in the visible code range. Like other regex-based approaches in this extension, it has limitations:
+// - It might not correctly handle all forms of aliasing (e.g., `const { theme: myTheme } = props; ... myTheme.path`).
+//   The current pattern for destructuring `(?:\(\s*\{[^}]*theme[^}]*\}\s*\)\s*=>\s*theme\.([\w.]+)\b)`
+//   specifically looks for the literal `theme.` after the arrow, which doesn't cover aliased usage like `myAlias.path`.
+// - Complex JavaScript expressions or indirect theme access might be missed.
+// For truly robust detection, semantic analysis via the TypeScript Language Service would be necessary.
+// This would involve parsing the code into an Abstract Syntax Tree (AST), resolving symbols,
+// and checking types to confirm that an expression indeed refers to a theme property.
+// The `typescript-styled-plugin`, if installed by the user, enhances the TS Language Service's
+// understanding of code within styled-components, which would make such semantic analysis more accurate
+// for theme accesses within those contexts.
 const THEME_PATH_DETECTION_REGEX = /(?:\btheme\.([\w.]+)\b)|(?:props\.theme\.([\w.]+)\b)|(?:\(\s*\{[^}]*theme[^}]*\}\s*\)\s*=>\s*theme\.([\w.]+)\b)/g;
 
 

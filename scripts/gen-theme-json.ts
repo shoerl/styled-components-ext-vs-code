@@ -16,6 +16,65 @@ interface Theme {
 // --- Flattening Logic ---
 type FlattenedTheme = { [key: string]: string | number | boolean };
 
+// Placeholder for the mock theme generation
+function createMockTheme(): Theme {
+  console.warn("Using a placeholder mock theme in gen-theme-json.ts. Replace with actual theme loading or a more robust mock.");
+  return {
+    palette: {
+      primary: {
+        main: '#1976d2',
+        light: '#42a5f5',
+        dark: '#1565c0',
+        contrastText: '#fff',
+      },
+      secondary: {
+        main: '#9c27b0',
+        light: '#ba68c8',
+        dark: '#7b1fa2',
+        contrastText: '#fff',
+      },
+      error: {
+        main: '#d32f2f',
+      },
+      common: {
+        black: '#000',
+        white: '#fff',
+      }
+    },
+    typography: {
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontSize: 14,
+      h1: {
+        fontSize: '2.5rem',
+      }
+    },
+    spacing: (factor: number) => `${factor * 8}px`,
+    shape: {
+      borderRadius: 4,
+    },
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 900,
+            lg: 1200,
+            xl: 1536,
+        }
+    },
+    zIndex: {
+        appBar: 1100,
+        drawer: 1200,
+    },
+    customProperty: "customValue",
+    customObject: {
+        nestedKey: "nestedValue",
+        deeplyNested: {
+            value: 123
+        }
+    }
+  };
+}
+
 const flattenObject = (obj: any, parentKey: string = '', result: FlattenedTheme = {}): FlattenedTheme => {
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
