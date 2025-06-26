@@ -134,22 +134,55 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
 
-        const command = `npm run generate-theme`;
-        const executionEnv = { ...process.env, STYLED_THEME_FILE_PATH: themeFilePath };
+        const extensionPath = context.extensionPath;
+        const cliScriptPath = path.join(extensionPath, 'node_modules', 'tailwindcss-themer', 'dist', 'cli.js');
+
+        // Ensure themeFilePath is absolute
+        const absoluteThemeFilePath = path.isAbsolute(themeFilePath)
+            ? themeFilePath
+            : path.join(projectRoot, themeFilePath);
+
+        // Output path for the generated theme (e.g., in .vscode of the project root)
+        const outputDir = path.join(projectRoot, '.vscode');
+        const outputJsonPath = path.join(outputDir, 'theme-values.json');
+
+        // Ensure .vscode directory exists
+        try {
+            await vscode.workspace.fs.createDirectory(vscode.Uri.file(outputDir));
+        } catch (error) {
+            // Directory likely already exists, or another error occurred.
+            // If it's a critical error (e.g., permissions), the command execution will fail anyway.
+            console.warn(`Could not create .vscode directory (it might already exist): ${error}`);
+        }
+
+        // Construct the command to execute the CLI script directly
+        // The CLI script likely takes arguments like --config and --output
+        // Assuming `tailwindcss-themer` CLI arguments:
+        // `node cli.js --config <path-to-theme-file> --output <path-to-output-json>`
+        const command = `node "${cliScriptPath}" --config "${absoluteThemeFilePath}" --output "${outputJsonPath}"`;
+
+        vscode.window.showInformationMessage(`Executing: ${command}`);
+
         const terminal = vscode.window.createTerminal({
             name: "Generate Theme Data",
-            cwd: projectRoot,
-            env: executionEnv as { [key: string]: string | null | undefined }
+            cwd: projectRoot, // Execute in project root, though script paths are absolute
         });
-        terminal.sendText(command, true);
+        terminal.sendText(command, true); // true to execute after sending
         terminal.show();
 
-        setTimeout(() => {
-            reloadThemeData(context);
-            if (inlayHintsProvider) {
-                inlayHintsProvider.refresh();
-            }
-        }, 2000);
+        // It's better to wait for the command to actually finish or for the file to appear
+        // than using a fixed timeout. For now, we'll keep a timeout but acknowledge this limitation.
+        // A more robust solution would be to watch for theme-values.json creation/modification
+        // by the `initializeThemeLoader` which already watches this file.
+        // The reloadThemeData is called by the file watcher in loadTheme.ts when theme-values.json changes.
+
+        // The `reloadThemeData` and inlay hint refresh should ideally be triggered
+        // by the file watcher in `loadTheme.ts` that monitors `theme-values.json`.
+        // Forcing a reload here after a timeout might be redundant or premature if the command takes longer.
+        // However, if the command execution itself is quick and file event propagation is delayed,
+        // this can help. Let's rely on the watcher for now.
+        // If issues persist, we might add a small delay here as a fallback.
+        // For now, the watcher in `loadTheme.ts` should handle reloading.
     });
     context.subscriptions.push(generateThemeCommand);
 
